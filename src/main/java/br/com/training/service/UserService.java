@@ -1,10 +1,13 @@
 package br.com.training.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.training.dto.request.UserForm;
+import br.com.training.dto.response.UserResponse;
 import br.com.training.model.User;
 import br.com.training.repository.UserRepository;
 
@@ -14,25 +17,29 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 	
-	public User createUser(User user) {
-		return userRepository.save(user);
+	public UserResponse createUser(UserForm userForm) {
+		return transformUserDTO(userRepository.save(userForm.build()));
 	}
 	
-	public User getUser(String cpf) {
-		return userRepository.findByCpf(cpf);
+	public UserResponse getUser(String cpf) {
+		return transformUserDTO(userRepository.findByCpf(cpf));
 	}
 	
-	public List<User> getAllUsers(){
-		return userRepository.findAll();
+	public List<UserResponse> getAllUsers(){
+		return userRepository.findAll().stream().map(this::transformUserDTO).collect(Collectors.toList());
 	}
 	
-	public User updateUser(String cpf , User user) {		
-		return userRepository.save(user);
+	public UserResponse updateUser(String cpf , UserForm userForm) {		
+		return transformUserDTO(userRepository.save(userForm.build()));
 	}
 	
 	public void deleteUser(String cpf) {
-		User user = userRepository.findByCpf(cpf);
-		userRepository.delete(user);
+		userRepository.delete(userRepository.findByCpf(cpf));
 	}
+	
+	private UserResponse transformUserDTO(User user) {
+		return new UserResponse(user.getName(), user.getEmail(), user.getCpf(), user.getBirthDate());
+	}
+	
 
 }

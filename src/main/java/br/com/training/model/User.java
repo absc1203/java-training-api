@@ -47,6 +47,17 @@ public class User implements Serializable {
 			}
 		}
 	}
+	
+	public User() {
+	}
+
+	public User(String name, String email, String cpf, LocalDate birthDate) {
+		super();
+		this.name = name;
+		this.email = email;
+		this.cpf = cpf;
+		this.birthDate = birthDate;
+	}
 
 	public LocalDate getBirthDate() {
 		return birthDate;
